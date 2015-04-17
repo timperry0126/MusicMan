@@ -36,81 +36,95 @@ def main():
 
     flowX1, flowX2, flowX3, flowX4, flowX5 = SCREEN_WIDTH, SCREEN_WIDTH, SCREEN_WIDTH, SCREEN_WIDTH, SCREEN_WIDTH #starting pos of flowers
     cloudX, cloudY = SCREEN_WIDTH, random.randrange(10, 100) #Starting pos of clouds
-    player = Player()
-    Player()
-    global mod
+    floorX_1, floorX_2 = 0, 700 #Placement of grass running surface
+    player = Player()   #Creation of player object
     mod = [0] #determines how fast scenery moves
+
+    pygame.mixer.music.load('A Wish.ogg')   #Loads song into pygame
+    pygame.mixer.music.set_endevent(pygame.constants.USEREVENT)     #A trigger event for when song ends
+    pygame.mixer.music.play(50) #!?!?Not a permenent solution for infinite loop!?!?    
 
     jump_sound = pygame.mixer.Sound("spin_jump.wav") #Jump Sound
 
-    # -------- Main Program Loop -----------    
+    floor_1 = pygame.image.load("Grass.png").convert()
+
+    floor_2 = pygame.image.load("Grass.png").convert()
+
+
+    #---Main Program Loop-------------------------------
+
     while not done:
-        # --- Main event loop
+        
+        # --- Main event loop---------------------------
+
         for event in pygame.event.get(): # User did something
             if event.type == pygame.QUIT: # If user clicked close
                 done = True # Flag that we are done so we exit this loop
 
-        # --- Game logic should go here
+        #---Updates Screen with new drawings------------
+
+        screen.fill(WHITE) #Clears screen to white
+
+        pygame.draw.rect(screen, (100,100,200), [0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - 150]) #Sky Backdrop
         
-        # --- Drawing code should go here
-        # First, clear the screen to white. Don't put other drawing commands
-        # above this, or they will be erased with this command.
-        screen.fill(WHITE)
+        #pygame.draw.rect(screen, GREEN, [0, 350, 700, 200]) #Floor drawn
+        
+        screen.blit(floor_1,(floorX_1, 350))    #Draws Grass to screen
+        screen.blit(floor_2,(floorX_2, 350))    #Draws Grass to screen
 
-        pygame.draw.rect(screen, (100,100,200), [0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - 200]) #Sky Backdrop
-        pygame.draw.rect(screen, GREEN, [0, 300, 700, 200]) #Floor drawn
-        player.draw(screen)
-        player.update(mod)
-
-        pygame.draw.rect(screen, WHITE, [cloudX, cloudY, 50, 30]) #Cloud Drawn
-
-        pygame.draw.ellipse(screen, YELLOW, [flowX1, 310, 2,2]) #Flower drawn
-        pygame.draw.ellipse(screen, YELLOW, [flowX2, 350, 4,4]) #Flower drawn
         pygame.draw.ellipse(screen, YELLOW, [flowX3, 390, 6,6]) #Flower drawn
         pygame.draw.ellipse(screen, YELLOW, [flowX4, 430, 8,8]) #Flower drawn
         pygame.draw.ellipse(screen, YELLOW, [flowX5, 470, 10,10]) #Flower drawn
+        
+        player.draw(screen) #Draws player to screen
+        
+        pygame.draw.rect(screen, WHITE, [cloudX, cloudY, 50, 30]) #Cloud Drawn
 
-#------------------------------------------------
-    #Cloud Behavior
+        #---Player's Behavior----------------------------
+
+        player.update(mod)
+        
+        #---Ground Behavior------------------------------
+
+        floorX_1 -= 1 + mod[0]
+        floorX_2 -= 1 + mod[0]
+
+        if(floorX_1 <= -700):
+            floorX_1 = 700
+        if(floorX_2 <= -700):
+            floorX_2 = 700
+    
+        #---Cloud Behavior------------------------------
+    
         cloudX -= .5 + mod[0] #Moves Cloud to the left plus how fast the character is going
 
         if (cloudX < -50):  #When Cloud moves off left screen, respawn on right side
             cloudX = SCREEN_WIDTH
             cloudY = random.randrange(10, 100)
 
-#------------------------------------------------
-    #Flower Behavior
-
-        flowX1 -= 1.1 + mod[0] #Moves flower to the left plus how fast the character is going
-        flowX2 -= 1.3 + mod[0]
-        flowX3 -= 1.5 + mod[0]
+        #---Flower Behavior-----------------------------
+        
+        '''flowX3 -= 1.5 + mod[0]
         flowX4 -= 1.7 + mod[0]
         flowX5 -= 1.9 + mod[0]
         
-        
-        if (flowX1 < -10):  #When flower moves off left screen, respawn on right side
-            flowX1 = SCREEN_WIDTH
-        if (flowX2 < -10):  
-            flowX2 = SCREEN_WIDTH
         if (flowX3 < -10):  
             flowX3 = SCREEN_WIDTH
-        if (flowX4 < -10):  
-            flowX4 = SCREEN_WIDTH
-        if (flowX5 < -10):  
-            flowX5 = SCREEN_WIDTH
+            flowX4 = SCREEN_WIDTH 
+            flowX5 = SCREEN_WIDTH'''
 
-#------------------------------------------------
-        #Handles all key down events
+        #---Handles all key down events-----------------
 
         player.handle_keys(mod)
     
+        #---Updates the screen with what we've drawn----
 
-#-------------------------------------------------
-
-        # updates the screen with what we've drawn.
         pygame.display.flip()
-        # Limit to 60 frames per second
+        
+        #---Limit to 60 frames per second---------------
+
         clock.tick(60)
+
     pygame.quit()
     
 main()
