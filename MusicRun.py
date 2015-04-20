@@ -34,7 +34,6 @@ def main():
     
     velocity = 4 #speed of character
 
-    flowX1, flowX2, flowX3, flowX4, flowX5 = SCREEN_WIDTH, SCREEN_WIDTH, SCREEN_WIDTH, SCREEN_WIDTH, SCREEN_WIDTH #starting pos of flowers
     cloudX, cloudY = SCREEN_WIDTH, random.randrange(10, 100) #Starting pos of clouds
     floorX_1, floorX_2 = 0, 700 #Placement of grass running surface
     player = Player()   #Creation of player object
@@ -46,9 +45,8 @@ def main():
 
     jump_sound = pygame.mixer.Sound("spin_jump.wav") #Jump Sound
 
-    floor_1 = pygame.image.load("Grass.png").convert()
-
-    floor_2 = pygame.image.load("Grass.png").convert()
+    floor_1 = pygame.image.load("Grass.png").convert()  #loads Grass Platform
+    floor_2 = pygame.image.load("Grass.png").convert()  #loads Grass Platform
 
 
     #---Main Program Loop-------------------------------
@@ -62,7 +60,7 @@ def main():
                 done = True # Flag that we are done so we exit this loop
 
         #---Updates Screen with new drawings------------
-
+                
         screen.fill(WHITE) #Clears screen to white
 
         pygame.draw.rect(screen, (100,100,200), [0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - 150]) #Sky Backdrop
@@ -71,10 +69,6 @@ def main():
         
         screen.blit(floor_1,(floorX_1, 350))    #Draws Grass to screen
         screen.blit(floor_2,(floorX_2, 350))    #Draws Grass to screen
-
-        pygame.draw.ellipse(screen, YELLOW, [flowX3, 390, 6,6]) #Flower drawn
-        pygame.draw.ellipse(screen, YELLOW, [flowX4, 430, 8,8]) #Flower drawn
-        pygame.draw.ellipse(screen, YELLOW, [flowX5, 470, 10,10]) #Flower drawn
         
         player.draw(screen) #Draws player to screen
         
@@ -101,17 +95,6 @@ def main():
         if (cloudX < -50):  #When Cloud moves off left screen, respawn on right side
             cloudX = SCREEN_WIDTH
             cloudY = random.randrange(10, 100)
-
-        #---Flower Behavior-----------------------------
-        
-        '''flowX3 -= 1.5 + mod[0]
-        flowX4 -= 1.7 + mod[0]
-        flowX5 -= 1.9 + mod[0]
-        
-        if (flowX3 < -10):  
-            flowX3 = SCREEN_WIDTH
-            flowX4 = SCREEN_WIDTH 
-            flowX5 = SCREEN_WIDTH'''
 
         #---Handles all key down events-----------------
 
