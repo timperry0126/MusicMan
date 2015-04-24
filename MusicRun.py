@@ -36,7 +36,11 @@ def main():
 
     cloudX, cloudY = SCREEN_WIDTH, random.randrange(10, 100) #Starting pos of clouds
     floorX_1, floorX_2 = 0, 700 #Placement of grass running surface
+    
     player = Player()   #Creation of player object
+    platform1 = Platform(150, 238)
+    platform2 = Platform(150, 114)
+    
     mod = [0] #determines how fast scenery moves
 
     pygame.mixer.music.load('A Wish.ogg')   #Loads song into pygame
@@ -47,7 +51,6 @@ def main():
 
     floor_1 = pygame.image.load("Grass.png").convert()  #loads Grass Platform
     floor_2 = pygame.image.load("Grass.png").convert()  #loads Grass Platform
-
 
     #---Main Program Loop-------------------------------
 
@@ -65,10 +68,11 @@ def main():
 
         pygame.draw.rect(screen, (100,100,200), [0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - 150]) #Sky Backdrop
         
-        #pygame.draw.rect(screen, GREEN, [0, 350, 700, 200]) #Floor drawn
-        
         screen.blit(floor_1,(floorX_1, 350))    #Draws Grass to screen
         screen.blit(floor_2,(floorX_2, 350))    #Draws Grass to screen
+
+        platform1.draw(screen)
+        platform2.draw(screen)
         
         player.draw(screen) #Draws player to screen
         
@@ -77,6 +81,11 @@ def main():
         #---Player's Behavior----------------------------
 
         player.update(mod)
+
+        #---Platform Behavior----------------------------
+
+        platform1.update(mod)
+        platform2.update(mod)
         
         #---Ground Behavior------------------------------
 

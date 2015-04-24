@@ -12,7 +12,8 @@ class Player(object):
         self.x = 140 # x position object is drawn at
         self.y = 300 # y position object is drawn at
         self.stat = 1 # counter for update()
-        self.walk = 12
+        self.walk = 12 # Controls how fast animation loops
+        self.isJump = False
 
     def handle_keys(self, mod):
         #Handles all key down events
@@ -26,12 +27,12 @@ class Player(object):
         if (keys[pygame.K_a] or keys[pygame.K_LEFT]): #moves character to the left
             if(mod[0] > 0):
                 mod[0] -= 1
-                
-        if (keys[pygame.K_w] or keys[pygame.K_UP]) and (self.y == GROUND): #jumps character
-            for n in range(0, 100):
-                self.y -= 1
 
-        if (self.y != GROUND):  #bring player back to ground level if not on ground
+        #---Jumping---------------------------- 
+                
+        if (keys[pygame.K_w] or keys[pygame.K_UP]): #jumps character
+            self.y -= 2
+        if(not(keys[pygame.K_w] or keys[pygame.K_UP]) and self.y != GROUND):
             self.y += 2
                 
     def draw(self, surface):
@@ -74,3 +75,17 @@ class Player(object):
         
         if (self.stat > self.walk * 16):   #loops back to beginning animation
             self.stat = 1
+
+class Platform(object):
+    def __init__(self, xPos, yPos):
+        self.x = xPos
+        self.y = yPos
+        
+    def draw(self, window):
+        pygame.draw.rect(window, (0,0,0), [self.x, self.y, 100, 20])
+
+    def update(self, mod):
+        self.x -= 1 + mod[0]
+
+        if(self.x < -100):
+            self.x = 700
