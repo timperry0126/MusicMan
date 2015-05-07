@@ -7,13 +7,25 @@ WHITE = (255,255,255)
 class Player(object):
 
     def __init__(self): #Constructor
-        self.image = pygame.image.load("Eye_walk_1.png").convert()
-        self.image.set_colorkey(WHITE)
+        self.image = pygame.image.load("Eye_walk_1.png").convert()  #Loads Character
+        self.image.set_colorkey(WHITE)  #Sets color to turn transparent
         self.x = 140 # x position object is drawn at
         self.y = 300 # y position object is drawn at
+        self.width = 28 # width of pic
+        self.height = 62 # height of pic
         self.stat = 1 # counter for update()
         self.walk = 12 # Controls how fast animation loops
-        self.isJump = False
+        self.isJump = False #Controls Jump algorithm
+        self.stable = False
+
+    def isPlatform(self, collision):
+        #Collion: multidimentional [3][x,y,width]
+        if((self.y + self.height) == collision[0][1]):
+            if(self.x >= collision[0][0] and self.x <= (collision[0][0] + collision[0][2])):
+                self.stable = True
+                return
+        self.stable = False
+        
 
     def handle_keys(self, mod):
         #Handles all key down events
@@ -29,10 +41,17 @@ class Player(object):
                 mod[0] -= 1
 
         #---Jumping---------------------------- 
-                
-        if (keys[pygame.K_w] or keys[pygame.K_UP]): #jumps character
+
+        if ((keys[pygame.K_w] or keys[pygame.K_UP]) and self.y == GROUND):  #Checks if player is currently jumping
+            self.isJump = True
+
+        if(self.y == 238 - self.height): # Stops character at first platform
+            self.isJump = False
+            
+        if (self.isJump): #jumps character
             self.y -= 2
-        if(not(keys[pygame.K_w] or keys[pygame.K_UP]) and self.y != GROUND):
+            
+        if ((self.isJump == False and self.y != GROUND) and not (self.stable)): #Bring player to the ground
             self.y += 2
                 
     def draw(self, surface):
@@ -77,15 +96,22 @@ class Player(object):
             self.stat = 1
 
 class Platform(object):
-    def __init__(self, xPos, yPos):
-        self.x = xPos
-        self.y = yPos
+    def __init__(self, xPos, yPos, image, h, l):
+        self.x = xPos # x position of platform
+        self.y = yPos # y position of platform
+        self.image = pygame.image.load(image + ".png").convert()
+        self.image.set_colorkey(WHITE)
+        self.height = h # height of picture
+        self.length = l # length of picture
         
     def draw(self, window):
-        pygame.draw.rect(window, (0,0,0), [self.x, self.y, 100, 20])
+        window.blit(self.image, (self.x, self.y)) #draws platform to screen
 
     def update(self, mod):
-        self.x -= 1 + mod[0]
+        self.x -= 1 + mod[0] #how fast plaform is moving
 
-        if(self.x < -100):
+        if(self.x < -100): #if platform goes out of screen, re-appear on right side
             self.x = 700
+
+    def coord(self):
+        return [self.x, self.y, self.length] 

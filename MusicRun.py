@@ -1,4 +1,5 @@
 # Import a library of functions called 'pygame'
+import os
 import pygame
 import random
 from Draw import *
@@ -38,16 +39,17 @@ def main():
     floorX_1, floorX_2 = 0, 700 #Placement of grass running surface
     
     player = Player()   #Creation of player object
-    platform1 = Platform(150, 238)
-    platform2 = Platform(150, 114)
+    platform1 = Platform(150, 238,"Platform_02", 26, 90)    #Creates Vine Platform Object
+    platform2 = Platform(150, 114,"Platform_01", 20, 90)    #Creates Cloud Platform Object
+    platform3 = Platform(150, 351,"Platform_03", 18, 90)    #Creates Stone Platform Object
     
     mod = [0] #determines how fast scenery moves
 
-    pygame.mixer.music.load('A Wish.ogg')   #Loads song into pygame
-    pygame.mixer.music.set_endevent(pygame.constants.USEREVENT)     #A trigger event for when song ends
-    pygame.mixer.music.play(50) #!?!?Not a permenent solution for infinite loop!?!?    
+    #pygame.mixer.music.load('A Wish.ogg')   #Loads song into pygame
+    #pygame.mixer.music.set_endevent(pygame.constants.USEREVENT)     #A trigger event for when song ends
+    #pygame.mixer.music.play(50) #!?!?Not a permenent solution for infinite loop!?!?    
 
-    jump_sound = pygame.mixer.Sound("spin_jump.wav") #Jump Sound
+    #jump_sound = pygame.mixer.Sound("spin_jump.wav") #Jump Sound
 
     floor_1 = pygame.image.load("Grass.png").convert()  #loads Grass Platform
     floor_2 = pygame.image.load("Grass.png").convert()  #loads Grass Platform
@@ -55,12 +57,17 @@ def main():
     #---Main Program Loop-------------------------------
 
     while not done:
-        
         # --- Main event loop---------------------------
 
         for event in pygame.event.get(): # User did something
-            if event.type == pygame.QUIT: # If user clicked close
+            if (event.type == pygame.QUIT): # If user clicked close
                 done = True # Flag that we are done so we exit this loop
+
+        onPlatform = [] #Carries each platforms location 
+        onPlatform.append(platform1.coord())
+        onPlatform.append(platform2.coord())
+        onPlatform.append(platform3.coord())
+        player.isPlatform(onPlatform)
 
         #---Updates Screen with new drawings------------
                 
@@ -71,12 +78,11 @@ def main():
         screen.blit(floor_1,(floorX_1, 350))    #Draws Grass to screen
         screen.blit(floor_2,(floorX_2, 350))    #Draws Grass to screen
 
-        platform1.draw(screen)
-        platform2.draw(screen)
+        platform1.draw(screen)  #Draws Vine platform
+        platform2.draw(screen)  #Draws Cloud platform
+        platform3.draw(screen)  #Draws Stone Platform
         
         player.draw(screen) #Draws player to screen
-        
-        pygame.draw.rect(screen, WHITE, [cloudX, cloudY, 50, 30]) #Cloud Drawn
 
         #---Player's Behavior----------------------------
 
@@ -86,24 +92,17 @@ def main():
 
         platform1.update(mod)
         platform2.update(mod)
+        platform3.update(mod)
         
         #---Ground Behavior------------------------------
 
         floorX_1 -= 1 + mod[0]
         floorX_2 -= 1 + mod[0]
 
-        if(floorX_1 <= -700):
-            floorX_1 = 700
+        if(floorX_1 <= -700):   #if floor platform goes out of left screen    
+            floorX_1 = 700     #Returns floor platform to the right of the screen
         if(floorX_2 <= -700):
             floorX_2 = 700
-    
-        #---Cloud Behavior------------------------------
-    
-        cloudX -= .5 + mod[0] #Moves Cloud to the left plus how fast the character is going
-
-        if (cloudX < -50):  #When Cloud moves off left screen, respawn on right side
-            cloudX = SCREEN_WIDTH
-            cloudY = random.randrange(10, 100)
 
         #---Handles all key down events-----------------
 
