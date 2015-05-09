@@ -3,6 +3,9 @@ import pygame
 
 GROUND = 300
 WHITE = (255,255,255)
+LEVEL_ONE = 351
+LEVEL_TWO = 238
+LEVEL_THREE = 114
 
 class Player(object):
 
@@ -15,15 +18,19 @@ class Player(object):
         self.height = 62 # height of pic
         self.stat = 1 # counter for update()
         self.walk = 12 # Controls how fast animation loops
-        self.isJump = False #Controls Jump algorithm
-        self.stable = False
+        self.isJump = False #returns true if player is currently jumping
+        self.stable = False #returns true if player is on platform
+        self.jumpHeight = 124
+        self.jumpCounter = 0
 
-    def isPlatform(self, collision):
-        #Collion: multidimentional [3][x,y,width]
-        if((self.y + self.height) == collision[0][1]):
-            if(self.x >= collision[0][0] and self.x <= (collision[0][0] + collision[0][2])):
-                self.stable = True
-                return
+    def isPlatform(self, collision, platAmount):
+        #Collion: multidimentional [platAmount][x,y,width]
+
+        for x in range(0, platAmount):
+            if((self.y + self.height) == collision[x][1]):
+                if(self.x >= collision[x][0] and self.x <= (collision[x][0] + collision[x][2])):
+                    self.stable = True
+                    return
         self.stable = False
         
 
@@ -42,14 +49,16 @@ class Player(object):
 
         #---Jumping---------------------------- 
 
-        if ((keys[pygame.K_w] or keys[pygame.K_UP]) and self.y == GROUND):  #Checks if player is currently jumping
+        if ((keys[pygame.K_w] or keys[pygame.K_UP])):  #Marks character as currently jumping
             self.isJump = True
-
-        if(self.y == 238 - self.height): # Stops character at first platform
+    
+        if(self.stable or (self.jumpHeight == self.jumpCounter)): # Stops character if he hits platform
             self.isJump = False
+            self.jumpCounter = 0
             
         if (self.isJump): #jumps character
             self.y -= 2
+            self.jumpCounter += 2
             
         if ((self.isJump == False and self.y != GROUND) and not (self.stable)): #Bring player to the ground
             self.y += 2
@@ -107,11 +116,14 @@ class Platform(object):
     def draw(self, window):
         window.blit(self.image, (self.x, self.y)) #draws platform to screen
 
-    def update(self, mod):
+    def update(self, mod, uni):
         self.x -= 1 + mod[0] #how fast plaform is moving
 
         if(self.x < -100): #if platform goes out of screen, re-appear on right side
-            self.x = 700
+            uni.pop(0)
 
     def coord(self):
-        return [self.x, self.y, self.length] 
+        return [self.x, self.y, self.length]
+
+    def posX(self):
+        return self.x

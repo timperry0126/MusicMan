@@ -23,6 +23,7 @@ mod = 0
 def main():
     
     pygame.init()# Initialize the game engine
+    pygame.mixer.init(frequency=22050, size=-16, channels=2, buffer=4096) #Initialize the music mixer
 
     size = (700, 500)   #Window Size
     screen = pygame.display.set_mode(size)  #Window Creation
@@ -39,17 +40,44 @@ def main():
     floorX_1, floorX_2 = 0, 700 #Placement of grass running surface
     
     player = Player()   #Creation of player object
-    platform1 = Platform(150, 238,"Platform_02", 26, 90)    #Creates Vine Platform Object
-    platform2 = Platform(150, 114,"Platform_01", 20, 90)    #Creates Cloud Platform Object
-    platform3 = Platform(150, 351,"Platform_03", 18, 90)    #Creates Stone Platform Object
+
+    rockPlatforms = []
+    vinePlatforms = []
+    cloudPlatforms = []
     
     mod = [0] #determines how fast scenery moves
 
-    #pygame.mixer.music.load('A Wish.ogg')   #Loads song into pygame
-    #pygame.mixer.music.set_endevent(pygame.constants.USEREVENT)     #A trigger event for when song ends
-    #pygame.mixer.music.play(50) #!?!?Not a permenent solution for infinite loop!?!?    
+     #***Sound Imports******************************************
+    #-Music---------------------------------------------------
+    Bounce1 = pygame.mixer.Sound('Bouncy2.wav')  #Loads Bouncy 2
+    Bounce2 = pygame.mixer.Sound('Bouncy3.wav')  #Loads Bouncy 3
+    Eyewalk1 = pygame.mixer.Sound('EyeWalker1.wav')  #Loads Eyewalker1
+    Eyewalk2 = pygame.mixer.Sound('EyeWalker2.wav')  #Loads Eyewalker2
+    Eyewalk3 = pygame.mixer.Sound('EyeWalker3.wav')  #Loads Eyewalker3
+    Walker1 = pygame.mixer.Sound('Walker1.wav')  #Loads Eyewalker1
+    Walker2 = pygame.mixer.Sound('Walker2.wav')  #Loads Eyewalker2
+    Walker3 = pygame.mixer.Sound('Walker3.wav')  #Loads Eyewalker3
 
-    #jump_sound = pygame.mixer.Sound("spin_jump.wav") #Jump Sound
+    #--Song Groups------------------------------------------------
+    bounceSongs = [Bounce1, Bounce2]    #Holds each characters songs
+    eyeSongs = [Eyewalk1, Eyewalk2, Eyewalk3]   #Holds each characters songs
+    walkerSongs = [Walker1, Walker2, Walker3]   #Holds each characters songs
+    
+    #-Sound Effects-------------------------------------------
+    BirdSquark = pygame.mixer.Sound('Bird squark2.wav')    #Loads sound effect.
+    Cat = pygame.mixer.Sound('CAT03.wav')    #Loads cat sound effect.
+    ComicMosquito = pygame.mixer.Sound('Comic mosquito.wav')    #Loads mosquito sound effect.
+    Humanoid = pygame.mixer.Sound('Humanoid.wav')    #Loads humanoid sound effect.
+    Move1 = pygame.mixer.Sound('Move1.wav')    #Loads move1 sound effect.
+    Move2 = pygame.mixer.Sound('Move2.wav')    #Loads move2 sound effect.
+    Slurp = pygame.mixer.Sound('Slurp1.wav')    #Loads sound effect.
+    Slurp2 = pygame.mixer.Sound('Slurp2.wav')    #Loads sound effect.
+    SPLODGE = pygame.mixer.Sound('SPLODGE.wav')    #Loads sound effect.
+    TimeMachine = pygame.mixer.Sound('Time machine loop2.wav')    #Loads sound effect.
+    Whoosh = pygame.mixer.Sound('WHOOSH08.WAV')    #Loads sound effect.
+    Zingle = pygame.mixer.Sound('ZINGLE.WAV')    #Loads sound effect.
+
+    #---Image Import-----------------------------------
 
     floor_1 = pygame.image.load("Grass.png").convert()  #loads Grass Platform
     floor_2 = pygame.image.load("Grass.png").convert()  #loads Grass Platform
@@ -63,11 +91,55 @@ def main():
             if (event.type == pygame.QUIT): # If user clicked close
                 done = True # Flag that we are done so we exit this loop
 
+        #--- Creation of platform ------------------------
+        global rockPlatforms    # Holds all rock platform objects
+        global vinePlatforms    # Holds all vine platform objects
+        global cloudPlatforms   # Holds all cloud platform objects
+        
+        counter1 = 0    #holds current position in vine Platform list
+        howManyPlat1 = random.randint(3,6) # determines how many platforms will be generated
+
+        if(len(vinePlatforms) == 0):    # If there are no vine platforms, make more
+            for x in range(0, howManyPlat1):
+                if(len(vinePlatforms) == 0):
+                    vinePlatforms.append(Platform(700, 238,"Platform_02", 26, 90))  #makes first vine object at the beginning right
+                else:
+                    vinePlatforms.append(Platform(vinePlatforms[counter1 - 1].posX() + 90, 238, "Platform_02", 26, 90))  #makes every other vine attached to it
+                counter1 += 1
+
+        counter2 = 0    #holds current position in cloud Platform list
+        howManyPlat2 = random.randint(3,6)
+        if(len(cloudPlatforms) == 0):    # If there are no cloud platforms, make more
+            for x in range(0, howManyPlat2):
+                if(len(cloudPlatforms) == 0):
+                    cloudPlatforms.append(Platform(700, 114,"Platform_01", 20, 90))  #makes first cloud object at the beginning right
+                else:
+                    cloudPlatforms.append(Platform(cloudPlatforms[counter2 - 1].posX() + 90, 114, "Platform_01", 20, 90))  #makes every other cloud attached to it
+                counter2 += 1
+
+        counter3 = 0    #holds current position in rock Platform list
+        howManyPlat3 = random.randint(3,6)
+        if(len(rockPlatforms) == 0):    # If there are no rock platforms, make more
+            for x in range(0, howManyPlat3):
+                if(len(rockPlatforms) == 0):
+                    rockPlatforms.append(Platform(700, 351,"Platform_03", 18, 90))  #makes first cloud object at the beginning right
+                else:
+                    rockPlatforms.append(Platform(rockPlatforms[counter3 - 1].posX() + 90, 351, "Platform_03", 18, 90))  #makes every other cloud attached to it
+                counter3 += 1
+        #-------------------------------------------------
+
         onPlatform = [] #Carries each platforms location 
-        onPlatform.append(platform1.coord())
-        onPlatform.append(platform2.coord())
-        onPlatform.append(platform3.coord())
-        player.isPlatform(onPlatform)
+
+        for x in vinePlatforms:
+            onPlatform.append(x.coord())
+
+        for x in cloudPlatforms:
+            onPlatform.append(x.coord())
+
+        for x in rockPlatforms:
+            onPlatform.append(x.coord())
+            
+        player.isPlatform(onPlatform, len(vinePlatforms) + len(cloudPlatforms) + len(rockPlatforms))
 
         #---Updates Screen with new drawings------------
                 
@@ -78,9 +150,14 @@ def main():
         screen.blit(floor_1,(floorX_1, 350))    #Draws Grass to screen
         screen.blit(floor_2,(floorX_2, 350))    #Draws Grass to screen
 
-        platform1.draw(screen)  #Draws Vine platform
-        platform2.draw(screen)  #Draws Cloud platform
-        platform3.draw(screen)  #Draws Stone Platform
+        for x in vinePlatforms:
+            x.draw(screen)
+
+        for x in cloudPlatforms:
+            x.draw(screen)
+
+        for x in rockPlatforms:
+            x.draw(screen)
         
         player.draw(screen) #Draws player to screen
 
@@ -90,9 +167,12 @@ def main():
 
         #---Platform Behavior----------------------------
 
-        platform1.update(mod)
-        platform2.update(mod)
-        platform3.update(mod)
+        for x in vinePlatforms:
+            x.update(mod, vinePlatforms)
+        for x in cloudPlatforms:
+            x.update(mod, cloudPlatforms)
+        for x in rockPlatforms:
+            x.update(mod, rockPlatforms)
         
         #---Ground Behavior------------------------------
 
