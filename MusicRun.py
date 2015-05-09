@@ -31,6 +31,11 @@ def main():
 
     
     done = False # Loop until the user clicks the close button.
+    start = False
+    choice = "Eye_Walk_" #Initial character selection
+
+    time = 0
+    total = 60
 
     clock = pygame.time.Clock() # Used to manage how fast the screen updates
     
@@ -149,6 +154,76 @@ def main():
         
         screen.blit(floor_1,(floorX_1, 350))    #Draws Grass to screen
         screen.blit(floor_2,(floorX_2, 350))    #Draws Grass to screen
+
+        #---Menu Loop-----------------------------------
+    
+        while not start and not done:
+
+            #--- Main event loop------------------------
+            
+            for event in pygame.event.get(): # User did something
+                if event.type == pygame.QUIT: # If user clicked close
+                    done = True # Flag that we are done so we exit this loop
+
+            #Animated Title
+            if(time < total - 40):
+                image = pygame.image.load("Title1.png").convert()
+                image.set_colorkey(WHITE)
+
+                screen.blit(image,(150,50))
+            if(time > total - 40):
+                image = pygame.image.load("Title2.png").convert()
+                image.set_colorkey(WHITE)
+
+                screen.blit(image,(150,50))
+            if(time >= total - 30):
+                image = pygame.image.load("Title3.png").convert()
+                image.set_colorkey(WHITE)
+
+                screen.blit(image,(150,50))
+            if(time == total):
+                time = 0
+
+            time += 5
+
+            #--- Draw character selectors---------------
+
+            char1 = CharacterSelector(200, 300, "Stalk_Walk_")
+            char2 = CharacterSelector(350, 300, "Eye_Walk_")
+            char3 = CharacterSelector(500, 300, "Blob_Walk_")
+
+            char1.draw(screen)
+            char2.draw(screen)
+            char3.draw(screen)
+
+           
+            button = pygame.mouse.get_pressed() #Checks if mouse button is pressed
+            mouse_pos = pygame.mouse.get_pos() #Gets current mouse position
+   
+
+            #Starts game when a character is selected
+            if(mouse_pos[0] >= char2.x and mouse_pos[0] <= char2.x + 28):
+                if(mouse_pos[1] >= char2.y and mouse_pos[1] <= char2.y + 62):
+                    if(button[0]):
+                        choice = "Eye_Walk_"
+                        start = True
+
+            if(mouse_pos[0] >= char1.x and mouse_pos[0] <= char1.x + 28):
+                if(mouse_pos[1] >= char1.y and mouse_pos[1] <= char1.y + 62):
+                    if(button[0]):
+                        choice = "Stalk_Walk_"
+                        start = True
+
+            
+            if(mouse_pos[0] >= char3.x and mouse_pos[0] <= char3.x + 28):
+                if(mouse_pos[1] >= char3.y and mouse_pos[1] <= char3.y + 62):
+                    if(button[0]):
+                        choice = "Blob_Walk_"
+                        start = True
+
+            pygame.display.flip()
+
+            clock.tick(60)
 
         for x in vinePlatforms:
             x.draw(screen)

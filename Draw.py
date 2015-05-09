@@ -127,3 +127,55 @@ class Platform(object):
 
     def posX(self):
         return self.x
+
+class CharacterSelector(object):
+    def __init__(self, xPos, yPos, option):
+        self.x = xPos
+        self.y = yPos
+        self.stat = 1 # counter for update()
+        self.walk = 12 # Controls how fast animation loops
+        self.image = pygame.image.load(option + "1.png").convert()
+        self.image.set_colorkey(WHITE)
+              
+        
+    def draw(self, window):
+        window.blit(self.image, (self.x, self.y))
+        
+
+    def update(self, mod, option):
+        if (self.stat < self.walk * 2):    #draws first animation
+            self.image = pygame.image.load(option + "1.png").convert()
+            self.image.set_colorkey(WHITE)
+            
+        if (self.stat >= self.walk * 2 and self.stat < self.walk * 4):   #draws second animation
+            self.image = pygame.image.load(option + "2.png").convert()
+            self.image.set_colorkey(WHITE)
+            
+        if (self.stat >= self.walk * 4 and self.stat < self.walk * 6):  #draws third animation
+            self.image = pygame.image.load(option + "3.png").convert()
+            self.image.set_colorkey(WHITE)
+            
+        if (self.stat >= self.walk * 6 and self.stat < self.walk * 8):  #draws fourth animation
+            self.image = pygame.image.load(option + "4.png").convert()
+            self.image.set_colorkey(WHITE)
+
+        if (self.stat >= self.walk * 8 and self.stat < self.walk * 10):  #draws fourth animation
+            self.image = pygame.image.load(option + "5.png").convert()
+            self.image.set_colorkey(WHITE)
+
+        if (self.stat >= self.walk * 10 and self.stat < self.walk * 12):  #draws fourth animation
+            self.image = pygame.image.load(option + "6.png").convert()
+            self.image.set_colorkey(WHITE)
+
+        if (self.stat >= self.walk * 12 and self.stat < self.walk * 14):  #draws fourth animation
+            self.image = pygame.image.load(option + "7.png").convert()
+            self.image.set_colorkey(WHITE)
+
+        if (self.stat >= self.walk * 14 and self.stat < self.walk * 16):  #draws fourth animation
+            self.image = pygame.image.load(option + "8.png").convert()
+            self.image.set_colorkey(WHITE)
+
+        self.stat += 5 + mod[0] #how fast animation moves plus speed of character
+        
+        if (self.stat > self.walk * 16):   #loops back to beginning animation
+            self.stat = 1
