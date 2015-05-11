@@ -1,3 +1,6 @@
+#Developed by: Timothy Perry, Simone Boyd, Quinn Daugherty, and Paul Tuttle
+#Class: CST 205
+
 # Import a library of functions called 'pygame'
 import os
 import pygame
@@ -255,9 +258,9 @@ def main():
         floorX_2 -= 1 + mod[0]
 
         if(floorX_1 <= -700):   #if floor platform goes out of left screen    
-            floorX_1 = 700     #Returns floor platform to the right of the screen
+            floorX_1 = floorX_2 + 700     #Attaches floor behind of the previous floor 
         if(floorX_2 <= -700):
-            floorX_2 = 700
+            floorX_2 = floorX_1 + 700
 
         #---Handles all key down events-----------------
 

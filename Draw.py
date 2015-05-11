@@ -1,3 +1,6 @@
+#Developed by: Timothy Perry, Simone Boyd, Quinn Daugherty, and Paul Tuttle
+#Class: CST 205
+
 import random
 import pygame
 
@@ -20,7 +23,7 @@ class Player(object):
         self.walk = 12 # Controls how fast animation loops
         self.isJump = False #returns true if player is currently jumping
         self.stable = False #returns true if player is on platform
-        self.jumpHeight = 124
+        self.jumpHeight = 128
         self.jumpCounter = 0
 
     def isPlatform(self, collision, platAmount):
@@ -39,29 +42,39 @@ class Player(object):
 
         keys = pygame.key.get_pressed()
 
-        if (keys[pygame.K_d] or keys[pygame.K_RIGHT]): #moves character to the right 
+        if (keys[pygame.K_d] or keys[pygame.K_RIGHT]): #Speeds character up
             if(mod[0] < 6):
                 mod[0] += 1
                 
-        if (keys[pygame.K_a] or keys[pygame.K_LEFT]): #moves character to the left
+        if (keys[pygame.K_a] or keys[pygame.K_LEFT]): #Slows Character Down
             if(mod[0] > 0):
                 mod[0] -= 1
 
-        #---Jumping---------------------------- 
+        #---Jumping----------------------------
+        if(self.jumpCounter != -1): #Makes sure the character is not currently falling
+            if (keys[pygame.K_w] or keys[pygame.K_UP]):  #Marks character as currently jumping
+                self.isJump = True
 
-        if ((keys[pygame.K_w] or keys[pygame.K_UP])):  #Marks character as currently jumping
-            self.isJump = True
-    
-        if(self.stable or (self.jumpHeight == self.jumpCounter)): # Stops character if he hits platform
-            self.isJump = False
-            self.jumpCounter = 0
-            
-        if (self.isJump): #jumps character
+        if(self.isJump == True and self.jumpCounter != self.jumpHeight):  #Jumps the character upwards
             self.y -= 2
             self.jumpCounter += 2
+            self.isJump == False
+
+        if(self.stable):    # Marks the character as not jumping if on platform
+            self.isJump = False
+            self.jumpCounter = 0
+
+        if(self.y == GROUND):   #Declares the ground as a platform
+            self.stable = True
+            self.jumpCounter = 0
+            self.isJump = False
             
-        if ((self.isJump == False and self.y != GROUND) and not (self.stable)): #Bring player to the ground
+        if((self.isJump == False and self.stable == False)):    #Bring character back to ground
             self.y += 2
+            self.jumpCounter = -1 # Marks the character as currently falling
+
+        if(self.jumpCounter == self.jumpHeight and self.stable == False):  #Second condition for bringing character back to the ground
+            self. y += 2
                 
     def draw(self, surface):
         surface.blit(self.image, (self.x, self.y)) #draws player to screen
