@@ -22,18 +22,20 @@ SCREEN_HEIGHT = 500
 GROUND = 250 #pixel ground level
 
 mod = 0
+
+   
         
 def main():
     
     pygame.init()# Initialize the game engine
-    pygame.mixer.init(frequency=22050, size=-16, channels=2, buffer=4096) #Initialize the music mixer
+    pygame.mixer.init() #Initialize the mixer module.
 
-    size = (700, 500)   #Window Size
-    screen = pygame.display.set_mode(size)  #Window Creation
-    pygame.display.set_caption("MusicRun")  #Displays Window Title
-
+    size = (700, 500)   #Window Size #Tim
+    screen = pygame.display.set_mode(size)  #Window Creation #Tim
+    pygame.display.set_caption("MusicRun")  #Displays Window Title #Tim
+   
     
-    done = False # Loop until the user clicks the close button.
+    done = False # Loop until the user clicks the close button. #Tim
     start = False
     choice = "Eye_Walk_" #Initial character selection
 
@@ -44,52 +46,31 @@ def main():
     
     velocity = 4 #speed of character
 
-    cloudX, cloudY = SCREEN_WIDTH, random.randrange(10, 100) #Starting pos of clouds
-    floorX_1, floorX_2 = 0, 700 #Placement of grass running surface
+    cloudX, cloudY = SCREEN_WIDTH, random.randrange(10, 100) #Starting pos of clouds #Tim
+    floorX_1, floorX_2 = 0, 700 #Placement of grass running surface #Tim
     
-    player = Player()   #Creation of player object
+    player = Player(choice)   #Creation of player object #Tim
 
-    rockPlatforms = []
-    vinePlatforms = []
-    cloudPlatforms = []
+
+    rockPlatforms = []  #Tim
+    vinePlatforms = []  #Tim
+    cloudPlatforms = [] #Tim
     
-    mod = [0] #determines how fast scenery moves
+    mod = [0] #determines how fast scenery moves #Tim
 
-     #***Sound Imports******************************************
-    #-Music---------------------------------------------------
-    Bounce1 = pygame.mixer.Sound('Bouncy2.wav')  #Loads Bouncy 2
-    Bounce2 = pygame.mixer.Sound('Bouncy3.wav')  #Loads Bouncy 3
-    Eyewalk1 = pygame.mixer.Sound('EyeWalker1.wav')  #Loads Eyewalker1
-    Eyewalk2 = pygame.mixer.Sound('EyeWalker2.wav')  #Loads Eyewalker2
-    Eyewalk3 = pygame.mixer.Sound('EyeWalker3.wav')  #Loads Eyewalker3
-    Walker1 = pygame.mixer.Sound('Walker1.wav')  #Loads Eyewalker1
-    Walker2 = pygame.mixer.Sound('Walker2.wav')  #Loads Eyewalker2
-    Walker3 = pygame.mixer.Sound('Walker3.wav')  #Loads Eyewalker3
-
-    #--Song Groups------------------------------------------------
-    bounceSongs = [Bounce1, Bounce2]    #Holds each characters songs
-    eyeSongs = [Eyewalk1, Eyewalk2, Eyewalk3]   #Holds each characters songs
-    walkerSongs = [Walker1, Walker2, Walker3]   #Holds each characters songs
-    
-    #-Sound Effects-------------------------------------------
-    BirdSquark = pygame.mixer.Sound('Bird squark2.wav')    #Loads sound effect.
-    Cat = pygame.mixer.Sound('CAT03.wav')    #Loads cat sound effect.
-    ComicMosquito = pygame.mixer.Sound('Comic mosquito.wav')    #Loads mosquito sound effect.
-    Humanoid = pygame.mixer.Sound('Humanoid.wav')    #Loads humanoid sound effect.
-    Move1 = pygame.mixer.Sound('Move1.wav')    #Loads move1 sound effect.
-    Move2 = pygame.mixer.Sound('Move2.wav')    #Loads move2 sound effect.
-    Slurp = pygame.mixer.Sound('Slurp1.wav')    #Loads sound effect.
-    Slurp2 = pygame.mixer.Sound('Slurp2.wav')    #Loads sound effect.
-    SPLODGE = pygame.mixer.Sound('SPLODGE.wav')    #Loads sound effect.
-    TimeMachine = pygame.mixer.Sound('Time machine loop2.wav')    #Loads sound effect.
-    Whoosh = pygame.mixer.Sound('WHOOSH08.WAV')    #Loads sound effect.
-    Zingle = pygame.mixer.Sound('ZINGLE.WAV')    #Loads sound effect.
-
-    #---Image Import-----------------------------------
+    #---Image Import------------------------------Tim------
 
     floor_1 = pygame.image.load("Grass.png").convert()  #loads Grass Platform
     floor_2 = pygame.image.load("Grass.png").convert()  #loads Grass Platform
 
+    #---Sound Import------------------------------Paul-----
+    Blob_Walk_Songs = ['Blob_Walk_1.wav', 'Blob_Walk_2.wav', 'Blob_Walk_3.wav']
+    Eye_Walk_Songs = ['Eye_Walk_1.wav', 'Eye_Walk_2.wav', 'Eye_Walk_3.wav']
+    Stalk_Walk_Songs = ['Stalk_Walk_1.wav', 'Stalk_Walk_2.wav', 'Stalk_Walk_3.wav']
+
+    #Sounds = ['Bird squark2.wav', 'CAT03.wav', 'Comic mosquito.wav', 'Humanoid.wav', 'Move1.wav', 'Move2.wav', 'Slurp1.wav', 'Slurp2.wav', 'SPLODGE.WAV', 'Time Machine loop2.wav', 'WHOOSH08.wav', 'Zingle.wav']
+    
+    
     #---Main Program Loop-------------------------------
 
     while not done:
@@ -97,15 +78,17 @@ def main():
 
         for event in pygame.event.get(): # User did something
             if (event.type == pygame.QUIT): # If user clicked close
+                pygame.quit()
                 done = True # Flag that we are done so we exit this loop
 
-        #--- Creation of platform ------------------------
+        #--- Creation of platform -------------------Tim--
         global rockPlatforms    # Holds all rock platform objects
         global vinePlatforms    # Holds all vine platform objects
         global cloudPlatforms   # Holds all cloud platform objects
+
         
         counter1 = 0    #holds current position in vine Platform list
-        howManyPlat1 = random.randint(3,6) # determines how many platforms will be generated
+        howManyPlat1 = random.randint(6,10) # determines how many platforms will be generated
 
         if(len(vinePlatforms) == 0):    # If there are no vine platforms, make more
             for x in range(0, howManyPlat1):
@@ -116,7 +99,7 @@ def main():
                 counter1 += 1
 
         counter2 = 0    #holds current position in cloud Platform list
-        howManyPlat2 = random.randint(3,6)
+        howManyPlat2 = random.randint(6,10)
         if(len(cloudPlatforms) == 0):    # If there are no cloud platforms, make more
             for x in range(0, howManyPlat2):
                 if(len(cloudPlatforms) == 0):
@@ -126,7 +109,7 @@ def main():
                 counter2 += 1
 
         counter3 = 0    #holds current position in rock Platform list
-        howManyPlat3 = random.randint(3,6)
+        howManyPlat3 = random.randint(6,10)
         if(len(rockPlatforms) == 0):    # If there are no rock platforms, make more
             for x in range(0, howManyPlat3):
                 if(len(rockPlatforms) == 0):
@@ -134,7 +117,7 @@ def main():
                 else:
                     rockPlatforms.append(Platform(rockPlatforms[counter3 - 1].posX() + 90, 351, "Platform_03", 18, 90))  #makes every other cloud attached to it
                 counter3 += 1
-        #-------------------------------------------------
+        #---Updates collision locations-----------Tim--
 
         onPlatform = [] #Carries each platforms location 
 
@@ -148,8 +131,8 @@ def main():
             onPlatform.append(x.coord())
             
         player.isPlatform(onPlatform, len(vinePlatforms) + len(cloudPlatforms) + len(rockPlatforms))
-
-        #---Updates Screen with new drawings------------
+        
+        #---Updates Screen with new drawings-------Tim--
                 
         screen.fill(WHITE) #Clears screen to white
 
@@ -158,7 +141,7 @@ def main():
         screen.blit(floor_1,(floorX_1, 350))    #Draws Grass to screen
         screen.blit(floor_2,(floorX_2, 350))    #Draws Grass to screen
 
-        #---Menu Loop-----------------------------------
+        #---Menu Loop-----------------------------------Quinn & Simone
     
         while not start and not done:
 
@@ -166,9 +149,12 @@ def main():
             
             for event in pygame.event.get(): # User did something
                 if event.type == pygame.QUIT: # If user clicked close
+                    pygame.quit()
                     done = True # Flag that we are done so we exit this loop
 
-            #Animated Title
+           
+                
+            #Animated Title - Simone
             if(time < total - 40):
                 image = pygame.image.load("Title1.png").convert()
                 image.set_colorkey(WHITE)
@@ -189,6 +175,13 @@ def main():
 
             time += 5
 
+            #Game Instructions
+            text = pygame.image.load("Instructions.png").convert()
+            text.set_colorkey(WHITE)
+
+            screen.blit(text, (5, 350))
+
+
             #--- Draw character selectors---------------
 
             char1 = CharacterSelector(200, 300, "Stalk_Walk_")
@@ -199,12 +192,12 @@ def main():
             char2.draw(screen)
             char3.draw(screen)
 
-           
+            
             button = pygame.mouse.get_pressed() #Checks if mouse button is pressed
             mouse_pos = pygame.mouse.get_pos() #Gets current mouse position
    
 
-            #Starts game when a character is selected
+            #Starts game when a character is selected - Simone
             if(mouse_pos[0] >= char2.x and mouse_pos[0] <= char2.x + 28):
                 if(mouse_pos[1] >= char2.y and mouse_pos[1] <= char2.y + 62):
                     if(button[0]):
@@ -224,10 +217,13 @@ def main():
                         choice = "Blob_Walk_"
                         start = True
 
+
             pygame.display.flip()
 
             clock.tick(60)
 
+        #---Draws each object to the screen------Tim---
+        
         for x in vinePlatforms:
             x.draw(screen)
 
@@ -239,11 +235,22 @@ def main():
         
         player.draw(screen) #Draws player to screen
 
-        #---Player's Behavior----------------------------
+        #---Sound Controls-----------------------Paul-------
+        # player.platformSound(choice)
 
-        player.update(mod)
+     
+        #---Player's Behavior--------------------Tim-----
 
-        #---Platform Behavior----------------------------
+        player.update(mod, choice)
+
+
+        #---Enemie Behavior----------------------------------
+
+
+           
+            
+            
+        #---Platform Behavior--------------------Tim-----
 
         for x in vinePlatforms:
             x.update(mod, vinePlatforms)
@@ -252,7 +259,7 @@ def main():
         for x in rockPlatforms:
             x.update(mod, rockPlatforms)
         
-        #---Ground Behavior------------------------------
+        #---Ground Behavior----------------------Tim-----
 
         floorX_1 -= 1 + mod[0]
         floorX_2 -= 1 + mod[0]
@@ -262,18 +269,16 @@ def main():
         if(floorX_2 <= -700):
             floorX_2 = floorX_1 + 700
 
-        #---Handles all key down events-----------------
+        #---Handles all key down events-----------Tim---
 
         player.handle_keys(mod)
     
-        #---Updates the screen with what we've drawn----
+        #---Updates the screen with what we've drawn-Tim-
 
         pygame.display.flip()
         
-        #---Limit to 60 frames per second---------------
+        #---Limit to 60 frames per second-----------Tim-
 
         clock.tick(60)
 
-    pygame.quit()
-    
 main()
